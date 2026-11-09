@@ -45,11 +45,22 @@ Pořadí spuštění: `nb_bronze_load` → `nb_bronze_check` → `nb_silver`. Po
 
 ### Kontrola počtů řádků
 
-Výsledek `nb_bronze_check` (běh _doplnit datum_):
+Počty v Bronze počítá notebook `nb_bronze_check` (kontrolní kód je v repozitáři), výsledek ukládá i do tabulky
+`ops_bronze_count_check`. Výsledek běhu 9. 11. 2026:
 
 | Tabulka | Počet ve zdroji | Počet v Bronze | Shoda |
 | --- | ---: | ---: | :---: |
-| _doplnit z výstupu `nb_bronze_check`_ | | | |
+| CESTUJICI → `bronze_cestujici` | 61964 | 61964 | ✅ |
+| REVIZOR → `bronze_revizor` | 300 | 300 | ✅ |
+| PREPRAVNI_KONTROLA → `bronze_prepravni_kontrola` | 5000 | 5000 | ✅ |
+| POHLEDAVKA → `bronze_pohledavka` | 5000 | 5000 | ✅ |
+| PLATBA → `bronze_platba` | 4582 | 4582 | ✅ |
+| COLLECTION_VYMAHANI → `bronze_collection_vymahani` | 976 | 976 | ✅ |
+| CLAIM_REKLAMACE_POKUTY → `bronze_claim_reklamace_pokuty` | 450 | 450 | ✅ |
+| REFUND → `bronze_refund` | 147 | 147 | ✅ |
+| PODNET_CESTUJICIHO → `bronze_podnet_cestujiciho` | 809 | 809 | ✅ |
+
+Opakované spuštění `nb_bronze_load` tabulky přepíše, počty zůstávají stejné jako ve zdroji (žádné duplicity).
 
 ## Silver
 
