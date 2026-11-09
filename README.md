@@ -127,7 +127,41 @@ Výsledek `nb_bronze_check` (běh _doplnit datum_):
 
 ### Výsledky posledního běhu
 
-_doplnit z výstupu `nb_silver`_
+Běh `nb_silver` 9. 11. 2026.
+
+| Tabulka | Bronze | Úplné duplicity | Duplicitní klíč | Karanténa | Silver |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `silver_cestujici` | 61964 | 0 | 0 | 0 | 61964 |
+| `silver_revizor` | 300 | 0 | 0 | 0 | 300 |
+| `silver_prepravni_kontrola` | 5000 | 0 | 0 | 0 | 5000 |
+| `silver_pohledavka` | 5000 | 0 | 0 | 0 | 5000 |
+| `silver_platba` | 4582 | 0 | 0 | 1 | 4581 |
+| `silver_collection_vymahani` | 976 | 0 | 0 | 0 | 976 |
+| `silver_claim_reklamace_pokuty` | 450 | 0 | 0 | 2 | 448 |
+| `silver_refund` | 147 | 0 | 0 | 0 | 147 |
+| `silver_podnet_cestujiciho` | 809 | 0 | 0 | 11 | 798 |
+
+Ve zdroji nejsou duplicitní řádky ani duplicitní klíče – deduplikace v Silver je pojistka pro budoucí načítání.
+
+**Pravidla, která v datech našla porušení** (ostatní pravidla: 0):
+
+| Pravidlo | Závažnost | Porušení | Co to znamená / rozhodnutí |
+| --- | --- | ---: | --- |
+| P01_NAME_MISSING | WARN | 5 | osoba bez jména – ponechána (je potřeba kvůli vazbě na kontroly), jméno do Silver stejně nejde |
+| P02_BIRTHDATE_IMPLAUSIBLE | WARN | 1353 | narození před rokem 1920 – `birth_year = NULL`, řádek zůstává |
+| P04_NATIONALITY_MISSING | WARN | 1 | chybí státní příslušnost – ponecháno jako `NULL` |
+| P05_DOCUMENT_MISSING | WARN | 1 | chybí typ dokladu – ponecháno jako `NULL` |
+| K02_INSPECTOR_NOT_VALID | WARN | 1 | kontrola revizorem mimo období jeho platnosti (otázka DPP č. 7) – ponecháno s příznakem |
+| H06_PAID_BUT_UNDERPAID | WARN | 12 | pohledávka ve stavu PAID, ale úspěšné platby jsou nižší než přirážka – ponecháno s příznakem |
+| M90_PAYMENT_IN_FUTURE | ERROR | 1 | platba s časem po okamžiku načtení – karanténa |
+| L02_SUBMITTED_BEFORE_INSPECTION | WARN | 2 | reklamace podaná dřív než samotná kontrola – ponecháno s příznakem |
+| L90_RESOLVED_IN_FUTURE | ERROR | 2 | reklamace vyřízená v budoucnosti – karanténa |
+| S01_INCIDENT_AFTER_SUBMISSION | WARN | 169 | incident nastal až po podání podnětu – ponecháno s příznakem (k ověření s DPP) |
+| S03_LINE_NOT_NORMALIZED | WARN | 393 | linka zadaná textem (`bus 119`) – normalizovaná hodnota je v `line_id` |
+| S04_STOP_NOT_MATCHED | WARN | 183 | podnět bez napárované zastávky (`stop_id = NULL`) – ponecháno |
+| S90_RESOLVED_IN_FUTURE | ERROR | 11 | podnět vyřízený v budoucnosti – karanténa |
+
+Pravidla „v budoucnosti“ se porovnávají s časem načtení, takže počty se s dalšími načteními mohou měnit.
 
 ## Práce s Gitem
 
